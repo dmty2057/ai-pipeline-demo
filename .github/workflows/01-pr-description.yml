@@ -25,5 +25,8 @@ jobs:
             - один рядок-підсумок
             - розділ "Що змінилось", згрупований за модулями
             - розділ "Testing"
-            Онови опис PR через доступні тобі GitHub-інструменти.
-          claude_args: "--max-turns 15"
+            Онови опис PR командою:
+            gh pr edit ${{ github.event.pull_request.number }} --body "<твій опис>"
+          claude_args: |
+            --max-turns 15
+            --allowedTools "Bash(gh pr edit:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
