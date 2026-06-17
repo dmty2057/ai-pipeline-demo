@@ -1,0 +1,29 @@
+name: Auto PR Description
+on:
+  pull_request:
+    types: [opened]
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+jobs:
+  describe:
+    # спрацьовуємо тільки якщо автор лишив опис порожнім
+    if: ${{ github.event.pull_request.body == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Це PR #${{ github.event.pull_request.number }} у репозиторії ${{ github.repository }}.
+            Автор лишив опис порожнім.
+            Подивись на diff цього PR і напиши чіткий опис:
+            - один рядок-підсумок
+            - розділ "Що змінилось", згрупований за модулями
+            - розділ "Testing"
+            Онови опис PR через доступні тобі GitHub-інструменти.
+          claude_args: "--max-turns 15"
