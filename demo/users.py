@@ -18,3 +18,11 @@ _USERS = {
 def get_user(user_id: int) -> Optional[User]:
     """Повертає User або None, якщо користувача не знайдено."""
     return _USERS.get(user_id)
+
+
+def find_user_by_email(email: str) -> Optional[User]:
+    """Знайти користувача за email; повертає None, якщо не знайдено."""
+    for user in _USERS.values():
+        if user.email == email:
+            return user
+    return None
