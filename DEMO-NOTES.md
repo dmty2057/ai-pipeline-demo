@@ -13,11 +13,11 @@
 
 | Гілка | Фіча | PR відкривати? | Статус |
 |-------|------|----------------|--------|
-| `demo/code-review` | AI Code Review | **НІ — відкриваю сам на сцені** | гілка запушена, PR закритий |
-| `demo/pr-description` | Auto PR Description | так, із порожнім описом | PR відкрито агентом |
-| `demo/dependency` | Dependency Guard | так | PR відкрито агентом |
-| (main, історія комітів) | Auto CHANGELOG | спрацьовує після мержу будь-якого PR | — |
-| (main, `tests/`) | Coverage Summary | спрацьовує на будь-якому PR | — |
+| `demo/code-review` | AI Code Review | **НІ — відкриваю сам на сцені** | гілка запушена, PR НЕ відкритий |
+| `demo/pr-description` | Auto PR Description | так, із порожнім описом | **PR #16 відкрито** |
+| `demo/dependency` | Dependency Guard | так | **PR #17 відкрито** |
+| (main, історія комітів) | Auto CHANGELOG | спрацьовує після мержу будь-якого PR | тег `v0.1.0` + feat/fix коміти готові |
+| (main, `tests/`) | Coverage Summary | спрацьовує на будь-якому PR | пробіл закладено (payments.py 35%) |
 
 ---
 
@@ -58,3 +58,49 @@
 **Що сказати зі сцени:** «Я відкриваю PR — і за ~1.5–2 хв Claude сам залишає інлайн-коментар
 прямо на рядку 8: ловить потенційний None-краш і вказує на порушення стилю іменування».
 (Перший прогін довший — підтягується плагін code-review.)
+
+---
+
+## Завдання 4 — PR для Auto PR Description (PR #16, ВІДКРИТИЙ)
+
+**Гілка:** `demo/pr-description` (від main). **PR #16 відкрито з ПОРОЖНІМ описом.**
+**Зміни торкаються 2 модулів** (щоб згенерований опис мав що групувати):
+- `demo/users.py` — нова функція `find_user_by_email(email)`.
+- `demo/payments.py` — нова функція `charge_by_email(email, amount)`, що використовує пошук за email.
+
+**Що покаже фіча:** workflow «Auto PR Description» сам заповнить порожній опис — підсумок +
+розділ «Що змінилось» (згрупований по модулях users/payments) + «Testing». Записати екран результату.
+> Примітка: на цьому ж PR відпрацюють і Code Review та Coverage — це нормально, фокус лише на описі.
+
+## Завдання 5 — PR для Dependency Guard (PR #17, ВІДКРИТИЙ)
+
+**Гілка:** `demo/dependency` (від main). **PR #17 відкрито.**
+**Зміна:** у `requirements.txt` додано `pandas==2.2.2` (поверх базового `requests==2.31.0`).
+
+**Що покаже фіча:** «Dependency Guard» прокоментує, що додано pandas, оцінить вагу
+(~30 МБ, тягне numpy, python-dateutil, pytz, tzdata), активність підтримки і поставить
+рішенче питання «чи воно того варте».
+
+## Завдання 6 — історія комітів під Auto CHANGELOG
+
+**Точка відліку:** тег `v0.1.0` (поставлений на main перед демо-комітами) — це «попередній реліз».
+Changelog збирає коміти від цього тега.
+
+**Коміти на main після `v0.1.0` (готовий матеріал для групування):**
+- `feat: add User.__repr__ for readable logging`
+- `feat: add list_active_users helper`
+- `fix: round late-fee total to 2 decimal places`
+- `fix: reject non-numeric charge amount`
+
+**Що покаже фіча:** після мержу будь-якого PR (напр. #16 чи #17) у main спрацює «Auto CHANGELOG»
+і додасть до `CHANGELOG.md` охайний запис, згрупований у **Features** (два feat) і **Fixes** (два fix),
+плюс зміни зі змердженого PR. Усі тести лишаються зеленими (`pytest` = 1 passed).
+
+---
+
+## Порядок дій на сцені (підказка)
+1. **Code Review** — відкрити PR з `demo/code-review` НАЖИВО → дочекатись інлайн-коментаря (рядок 8 orders.py).
+2. **PR Description** — показати вже заповнений опис PR #16 (або записаний екран).
+3. **Dependency Guard** — показати коментар про pandas у PR #17.
+4. **Coverage** — показати коментар про непокриті refund/apply_late_fee (на будь-якому PR).
+5. **CHANGELOG** — змержити PR → показати оновлений CHANGELOG.md у main.
