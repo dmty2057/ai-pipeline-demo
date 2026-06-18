@@ -37,4 +37,5 @@ def apply_late_fee(user_id: int, base_amount: float, days_overdue: int) -> dict:
     if days_overdue <= 0:
         return {"status": "no_fee", "amount": base_amount}
     fee = base_amount * 0.1 * days_overdue
-    return {"status": "fee_applied", "to": user.email, "total": base_amount + fee}
+    total = round(base_amount + fee, 2)
+    return {"status": "fee_applied", "to": user.email, "total": total}
