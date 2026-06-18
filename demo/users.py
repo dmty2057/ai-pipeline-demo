@@ -21,3 +21,8 @@ _USERS = {
 def get_user(user_id: int) -> Optional[User]:
     """Повертає User або None, якщо користувача не знайдено."""
     return _USERS.get(user_id)
+
+
+def list_active_users() -> list:
+    """Повернути список усіх відомих користувачів."""
+    return list(_USERS.values())
