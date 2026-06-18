@@ -1,0 +1,37 @@
+name: Dependency Guard
+on:
+  pull_request:
+    types: [opened, synchronize]
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+jobs:
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Diff requirements
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }} || true
+          git diff origin/${{ github.event.pull_request.base.ref }}...HEAD -- requirements.txt > req-diff.txt || true
+          echo "----- requirements.txt diff -----"
+          cat req-diff.txt
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            У файлі req-diff.txt — зміни requirements.txt у цьому PR (git diff проти базової гілки).
+            Якщо файл порожній (змін немає) — НІЧОГО не коментуй і просто заверши роботу.
+            Якщо є нові або оновлені залежності, поясни ОДНИМ коротким коментарем у PR
+            #${{ github.event.pull_request.number }}:
+            - що додалось або оновилось
+            - наскільки це важка чи ризикована залежність (розмір, транзитивні залежності, активність підтримки)
+            - чи варто через це хвилюватись
+            Коментар залиш командою:
+            gh pr comment ${{ github.event.pull_request.number }} --body "<твій текст>"
+          claude_args: |
+            --max-turns 15
+            --allowedTools "Bash(gh pr comment:*)"
