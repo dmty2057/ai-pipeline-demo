@@ -7,6 +7,9 @@ class User:
         self.user_id = user_id
         self.email = email
 
+    def __repr__(self) -> str:
+        return f"User(id={self.user_id}, email={self.email!r})"
+
 
 # Імітація "бази": не кожен id існує.
 _USERS = {
