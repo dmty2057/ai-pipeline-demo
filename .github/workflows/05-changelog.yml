@@ -8,7 +8,7 @@ permissions:
 jobs:
   changelog:
     # не зациклюємось на власному коміті changelog
-    if: ${{ !contains(github.event.head_commit.message, 'docs: update changelog') }}
+    if: "${{ !contains(github.event.head_commit.message, 'docs: update changelog') }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
