@@ -1,0 +1,27 @@
+name: Auto CHANGELOG
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+  id-token: write
+jobs:
+  changelog:
+    # не зациклюємось на власному коміті changelog
+    if: ${{ !contains(github.event.head_commit.message, 'docs: update changelog') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Подивись на git-коміти від попереднього тега (або останні 20 комітів,
+            якщо тега немає). Сформуй короткий запис CHANGELOG, згрупований у
+            "Features" і "Fixes". Додай його на початок файлу CHANGELOG.md
+            (створи файл, якщо його немає) і закоміть зміну в main з повідомленням
+            "docs: update changelog".
+          claude_args: "--max-turns 20"
+          use_commit_signing: true
