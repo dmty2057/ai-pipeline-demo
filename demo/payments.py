@@ -8,6 +8,8 @@ def charge(user_id: int, amount: float) -> dict:
     if user is None:
         # ВАЖЛИВИЙ шлях: невідомий користувач
         return {"status": "failed", "reason": "unknown_user"}
+    if not isinstance(amount, (int, float)):
+        return {"status": "failed", "reason": "invalid_amount_type"}
     if amount <= 0:
         return {"status": "failed", "reason": "invalid_amount"}
     return {"status": "charged", "to": user.email, "amount": amount}
