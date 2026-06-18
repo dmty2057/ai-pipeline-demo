@@ -14,19 +14,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pytest pytest-cov
-      # ганяємо тести з покриттям; || true щоб крок не впав і ми все одно прокоментували
-      - run: python -m pytest --cov=demo --cov-report=json --cov-report=term || true
+      - run: pip install pytest pytest-cov pytest-json-report
+      # ганяємо тести з покриттям + json-звіт результатів;
+      # || true щоб крок не впав на червоних тестах і ми все одно прокоментували
+      - run: python -m pytest --cov=demo --cov-report=json --cov-report=term --json-report --json-report-file=test-report.json || true
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
-            Прочитай звіт покриття у coverage.json (структура pytest-cov:
-            files[*].summary та files[*].missing_lines).
-            Людською мовою скажи рев'юерам PR #${{ github.event.pull_request.number }}:
-            - що покрито добре
-            - які ВАЖЛИВІ шляхи НЕ покриті і чому це ризик
-            Коротко. Не вивалюй сирі числа.
+            У тебе два звіти в корені репозиторію:
+            1. test-report.json (pytest-json-report): summary.passed / summary.failed /
+               summary.total, а у tests[*] поля nodeid та outcome.
+            2. coverage.json (pytest-cov): files[*].summary та files[*].missing_lines.
+
+            Склади ОДИН коментар для рев'юерів PR #${{ github.event.pull_request.number }}
+            людською мовою, у такому порядку:
+            - Прогон тестів: скільки пройшло / впало із загальної кількості. Якщо є
+              впалі — назви які саме (по nodeid) і поясни, який сигнал вони дають.
+            - Покриття: що покрито добре і які ВАЖЛИВІ шляхи НЕ покриті та чому це ризик.
+            Коротко, без сирих простирадл чисел. Перетвори метрики на висновок-рішення.
             Залиш це ОДНИМ коментарем у PR командою:
             gh pr comment ${{ github.event.pull_request.number }} --body "<твій текст>"
           claude_args: |
