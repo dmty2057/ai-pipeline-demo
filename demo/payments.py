@@ -1,5 +1,5 @@
 """Обробка платежів користувачів."""
-from demo.users import get_user
+from demo.users import get_user, find_user_by_email
 
 
 def charge(user_id: int, amount: float) -> dict:
@@ -38,3 +38,11 @@ def apply_late_fee(user_id: int, base_amount: float, days_overdue: int) -> dict:
         return {"status": "no_fee", "amount": base_amount}
     fee = base_amount * 0.1 * days_overdue
     return {"status": "fee_applied", "to": user.email, "total": base_amount + fee}
+
+
+def charge_by_email(email: str, amount: float) -> dict:
+    """Списати кошти, знайшовши користувача за його email."""
+    user = find_user_by_email(email)
+    if user is None:
+        return {"status": "failed", "reason": "unknown_email"}
+    return charge(user.user_id, amount)
