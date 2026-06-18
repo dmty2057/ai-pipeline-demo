@@ -26,7 +26,9 @@ jobs:
             (створи файл, якщо його немає).
             ВАЖЛИВО: лише онови файл CHANGELOG.md у робочій теці — НЕ роби git commit
             і git push самостійно, це зробить окремий крок workflow.
-          claude_args: "--max-turns 20"
+          claude_args: |
+            --max-turns 30
+            --allowedTools "Bash(git log:*),Bash(git describe:*),Bash(git tag:*),Bash(git diff:*),Bash(git show:*),Read,Write,Edit"
       - name: Commit changelog to main
         run: |
           if git diff --quiet -- CHANGELOG.md && ! git ls-files --others --exclude-standard CHANGELOG.md | grep -q .; then
