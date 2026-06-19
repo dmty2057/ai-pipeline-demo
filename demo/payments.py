@@ -6,7 +6,6 @@ def charge(user_id: int, amount: float) -> dict:
     """Списати кошти з користувача."""
     user = get_user(user_id)
     if user is None:
-        # ВАЖЛИВИЙ шлях: невідомий користувач
         return {"status": "failed", "reason": "unknown_user"}
     if not isinstance(amount, (int, float)):
         return {"status": "failed", "reason": "invalid_amount_type"}
@@ -16,10 +15,7 @@ def charge(user_id: int, amount: float) -> dict:
 
 
 def refund(user_id: int, amount: float) -> dict:
-    """Повернути кошти користувачу.
-
-    ВАЖЛИВИЙ шлях обробки повернення/відмови — навмисно лишений без тестів.
-    """
+    """Повернути кошти користувачу."""
     user = get_user(user_id)
     if user is None:
         return {"status": "failed", "reason": "unknown_user"}
@@ -29,10 +25,7 @@ def refund(user_id: int, amount: float) -> dict:
 
 
 def apply_late_fee(user_id: int, base_amount: float, days_overdue: int) -> dict:
-    """Нарахувати пеню за прострочення.
-
-    Критичний фінансовий шлях — навмисно лишений без тестів.
-    """
+    """Нарахувати пеню за прострочення."""
     user = get_user(user_id)
     if user is None:
         return {"status": "failed", "reason": "unknown_user"}
@@ -41,3 +34,12 @@ def apply_late_fee(user_id: int, base_amount: float, days_overdue: int) -> dict:
     fee = base_amount * 0.1 * days_overdue
     total = round(base_amount + fee, 2)
     return {"status": "fee_applied", "to": user.email, "total": total}
+
+
+def bulk_charge(user_ids: list, amount: float) -> dict:
+    """Списати однакову суму з кількох користувачів (без тестів)."""
+    results = {}
+    for uid in user_ids:
+        results[uid] = charge(uid, amount)
+    ok = sum(1 for r in results.values() if r["status"] == "charged")
+    return {"charged": ok, "total": len(user_ids), "results": results}
