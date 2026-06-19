@@ -26,3 +26,11 @@ def get_user(user_id: int) -> Optional[User]:
 def list_active_users() -> list:
     """Повернути список усіх відомих користувачів."""
     return list(_USERS.values())
+
+
+def find_user_by_email(email: str) -> Optional[User]:
+    """Знайти користувача за email або повернути None."""
+    for user in _USERS.values():
+        if user.email == email:
+            return user
+    return None
