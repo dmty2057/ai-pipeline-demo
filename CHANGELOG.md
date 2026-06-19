@@ -1,3 +1,20 @@
+## [Unreleased] — 2026-06-19
+
+### Features
+
+- **Orders module** — `orders.py` with order-shipped email notification and bulk-charge-by-email support
+- **Users module** — `users.py` with email-based user lookup, `list_active_users`, `count_active_users`, and `User.__repr__` for readable logging
+- **Extended payments** — invoice settlement (`settle_invoice`) and additional charge/refund helpers in `payments.py`
+- **AI GitHub Actions workflows** — automated PR description, inline code review, coverage summary comment, dependency guard, and changelog generation; all powered by Claude via `anthropics/claude-code-action`
+
+### Fixes
+
+- Non-numeric refund amount now raises `ValueError` instead of silently passing
+- Non-numeric charge amount now raises `ValueError` instead of silently passing
+- Late-fee total rounded to 2 decimal places to avoid floating-point drift
+
+---
+
 ## [Unreleased] — 2026-06-18
 
 ### Features
