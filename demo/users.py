@@ -26,3 +26,8 @@ def get_user(user_id: int) -> Optional[User]:
 def list_active_users() -> list:
     """Повернути список усіх відомих користувачів."""
     return list(_USERS.values())
+
+
+def count_active_users() -> int:
+    """Скільки відомих користувачів у системі."""
+    return len(_USERS)
