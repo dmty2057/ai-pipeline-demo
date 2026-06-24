@@ -1,5 +1,5 @@
 """Обробка платежів користувачів."""
-from demo.users import get_user
+from demo.users import get_user, find_user_by_email
 
 
 def charge(user_id: int, amount: float) -> dict:
@@ -16,10 +16,7 @@ def charge(user_id: int, amount: float) -> dict:
 
 
 def refund(user_id: int, amount: float) -> dict:
-    """Повернути кошти користувачу.
-
-    ВАЖЛИВИЙ шлях обробки повернення/відмови — навмисно лишений без тестів.
-    """
+    """Повернути кошти користувачу."""
     user = get_user(user_id)
     if user is None:
         return {"status": "failed", "reason": "unknown_user"}
@@ -29,10 +26,7 @@ def refund(user_id: int, amount: float) -> dict:
 
 
 def apply_late_fee(user_id: int, base_amount: float, days_overdue: int) -> dict:
-    """Нарахувати пеню за прострочення.
-
-    Критичний фінансовий шлях — навмисно лишений без тестів.
-    """
+    """Нарахувати пеню за прострочення."""
     user = get_user(user_id)
     if user is None:
         return {"status": "failed", "reason": "unknown_user"}
@@ -41,3 +35,11 @@ def apply_late_fee(user_id: int, base_amount: float, days_overdue: int) -> dict:
     fee = base_amount * 0.1 * days_overdue
     total = round(base_amount + fee, 2)
     return {"status": "fee_applied", "to": user.email, "total": total}
+
+
+def charge_by_email(email: str, amount: float) -> dict:
+    """Списати кошти, знайшовши користувача за email."""
+    user = find_user_by_email(email)
+    if user is None:
+        return {"status": "failed", "reason": "unknown_email"}
+    return charge(user.user_id, amount)
